@@ -1,0 +1,13 @@
+<mat-card>
+  <mat-spinner *ngIf="!gotTrailingResponse && !gotHighsLowsResponse"></mat-spinner>
+  <div *ngIf="gotTrailingResponse && gotHighsLowsResponse" id="currentTemp">
+    <div [countUp]="currentTemp" class="mat-display-4"></div>
+    <div class="mat-display-4">°F</div>
+  </div>
+  <div id="trailingTempsLine"
+       [hidden]="!gotTrailingResponse && !gotHighsLowsResponse">
+  </div>
+  <div id="highsLowsBar"
+       [hidden]="!gotTrailingResponse && !gotHighsLowsResponse">
+  </div>
+</mat-card>
