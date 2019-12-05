@@ -9,8 +9,8 @@ import { WeatherService } from '../shared/services/weather-service';
   providers: [ WeatherService ]
 })
 export class WeatherSummaryComponent implements OnInit {
-  gotTrailingResponse: boolean = false;
-  gotHighsLowsResponse: boolean = false;
+  gotTrailingResponse = false;
+  gotHighsLowsResponse = false;
   currentTemp: number;
   trailingTemps: number[];
   description: string;
@@ -31,22 +31,22 @@ export class WeatherSummaryComponent implements OnInit {
   }
 
   createLineGraph(data) {
-    let margin = {top: 25, right: 15, bottom: 20, left: 15};
-    let width = 320 - margin.left - margin.right;
-    let height = 200 - margin.top - margin.bottom;
-    let svg = d3.select('#trailingTempsLine')
+    const margin = {top: 25, right: 15, bottom: 20, left: 15};
+    const width = 320 - margin.left - margin.right;
+    const height = 200 - margin.top - margin.bottom;
+    const svg = d3.select('#trailingTempsLine')
         .append('svg')
         .attr('width', width + margin.left + margin.right)
         .attr('height', height + margin.top + margin.bottom)
         .append('g')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-    let x = d3.scaleLinear().domain([12, 0]).range([0, width]);
-    let y = d3.scaleLinear()
+    const x = d3.scaleLinear().domain([12, 0]).range([0, width]);
+    const y = d3.scaleLinear()
         .domain([this.getMinTemp(data), this.getMaxTemp(data)])
         .range([height, 0]);
-    let line = d3.line()
-        .x(function(d, i) {return x(i);})
-        .y(function(d) {return y(d.temperature);})
+    const line = d3.line()
+        .x((d, i) => x(i))
+        .y(d => y(d.temperature))
         .curve(d3.curveMonotoneX);
 
     svg.append('g')
@@ -63,30 +63,30 @@ export class WeatherSummaryComponent implements OnInit {
         .data(data)
         .enter()
         .append('text')
-        .attr('x', function(d, i) {
+        .attr('x', (d, i) => {
             return x(i) - 10;
         })
-        .attr('y', function(d) {
+        .attr('y', d => {
             return y(d.temperature) - 10;
         })
         .attr('fill', '#ffab00')
         .attr('font-size', '14px')
-        .text(function(d) {
+        .text(d => {
             return d.temperature;
         });
 
-    let tickData = this.getTickValues(data);
-    let xAxis = d3.axisBottom()
+    const tickData = this.getTickValues(data);
+    const xAxis = d3.axisBottom()
         .scale(x)
         .tickSize(0)
         .tickValues(tickData[0])
-        .tickFormat(function(d, i) { return tickData[1][i] });
+        .tickFormat((d, i) => tickData[1][i]);
 
-    let g = svg.append('g');
+    const g = svg.append('g');
 
     g.attr('transform', 'translate(0,' + height + ')')
         .call(xAxis)
-        .call(g => g.select('.domain').remove());
+        .call(gr => gr.select('.domain').remove());
   }
 
   getMinTemp(data) {
@@ -98,10 +98,10 @@ export class WeatherSummaryComponent implements OnInit {
   }
 
   getTickValues(data) {
-    let tickValues = [];
-    let tickLabels = [];
+    const tickValues = [];
+    const tickLabels = [];
     for (let i = 0; i < data.length; i++) {
-      if (i % 3 == 0) {
+      if (i % 3 === 0) {
         tickValues.push(i);
         tickLabels.push(data[i]._col0);
       }
@@ -110,10 +110,10 @@ export class WeatherSummaryComponent implements OnInit {
   }
 
   createBars(data) {
-    let margin = {top: 20, right: 5, bottom: 20, left: 5};
-    let width = 420 - margin.left - margin.right;
-    let height = 200 - margin.top - margin.bottom;
-    let svg = d3.select('#highsLowsBar')
+    const margin = {top: 20, right: 5, bottom: 20, left: 5};
+    const width = 420 - margin.left - margin.right;
+    const height = 200 - margin.top - margin.bottom;
+    const svg = d3.select('#highsLowsBar')
         .append('svg')
         .attr('width', width + margin.left + margin.right)
         .attr('height', height + margin.top + margin.bottom)
@@ -138,7 +138,7 @@ export class WeatherSummaryComponent implements OnInit {
         .call(xAxis)
         .call(g => g.select('.domain').remove());
 
-    let bars = svg.selectAll()
+    const bars = svg.selectAll()
         .data(data)
         .enter()
         .append('g');
