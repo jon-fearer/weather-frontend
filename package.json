@@ -1,6 +1,6 @@
 {
   "name": "weather-frontend",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -24,18 +24,21 @@
     "core-js": "^2.6.9",
     "countup.js": "^2.0.4",
     "d3": "^5.9.2",
+    "ngx-countup": "^7.3.0",
     "rxjs": "~6.5.4",
     "rxjs-compat": "^6.5.2",
     "tslib": "^1.11.1",
     "zone.js": "^0.10.3"
   },
   "devDependencies": {
+    "@angular-devkit/build-angular": "^0.900.7",
     "@angular/cli": "^9.0.6",
     "@angular/compiler-cli": "^9.0.6",
     "@angular/language-service": "^9.0.6",
     "@types/jasmine": "~2.8.8",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "~8.9.4",
+    "codelyzer": "^5.2.1",
     "jasmine-core": "~2.99.1",
     "jasmine-spec-reporter": "~4.2.1",
     "karma": "^4.4.1",
