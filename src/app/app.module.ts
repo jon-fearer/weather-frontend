@@ -1,24 +1,28 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatCardModule } from '@angular/material/card';
-import { HttpClientModule } from '@angular/common/http';
-import { CountUpModule } from 'ngx-countup';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatButtonModule } from '@angular/material/button';
+import {BrowserModule} from '@angular/platform-browser';
+import {NgModule} from '@angular/core';
+import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatCardModule} from '@angular/material/card';
+import {HttpClientModule} from '@angular/common/http';
+import {CountUpModule} from 'ngx-countup';
+import {MatIconModule} from '@angular/material/icon';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatButtonModule} from '@angular/material/button';
 
-import { AppComponent } from './app.component';
-import { BannerComponent } from './banner/banner.component';
-import { WeatherSummaryComponent } from './weather-summary/weather-summary.component';
-import { WeatherDetailComponent } from './weather-detail/weather-detail.component';
+import {AppComponent} from './app.component';
+import {BannerComponent} from './banner/banner.component';
+import {
+  WeatherSummaryComponent,
+} from './weather-summary/weather-summary.component';
+import {
+  WeatherDetailComponent,
+} from './weather-detail/weather-detail.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     BannerComponent,
     WeatherSummaryComponent,
-    WeatherDetailComponent
+    WeatherDetailComponent,
   ],
   imports: [
     BrowserModule,
@@ -28,9 +32,9 @@ import { WeatherDetailComponent } from './weather-detail/weather-detail.componen
     CountUpModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    MatButtonModule
+    MatButtonModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule { }
