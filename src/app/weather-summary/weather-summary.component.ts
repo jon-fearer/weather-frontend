@@ -1,12 +1,13 @@
 import * as d3 from 'd3';
-import { Component, OnInit } from '@angular/core';
-import { WeatherService } from '../shared/services/weather-service';
+import {Component, OnInit} from '@angular/core';
+import {WeatherService} from '../shared/services/weather-service';
+
 
 @Component({
   selector: 'app-weather-summary',
   templateUrl: './weather-summary.component.html',
   styleUrls: ['./weather-summary.component.css'],
-  providers: [ WeatherService ]
+  providers: [WeatherService],
 })
 export class WeatherSummaryComponent implements OnInit {
   gotTrailingResponse = false;
@@ -46,7 +47,7 @@ export class WeatherSummaryComponent implements OnInit {
         .range([height, 0]);
     const line = d3.line()
         .x((d, i) => x(i))
-        .y(d => y(d.temperature))
+        .y((d) => y(d.temperature))
         .curve(d3.curveMonotoneX);
 
     svg.append('g')
@@ -64,15 +65,15 @@ export class WeatherSummaryComponent implements OnInit {
         .enter()
         .append('text')
         .attr('x', (d, i) => {
-            return x(i) - 10;
+          return x(i) - 10;
         })
-        .attr('y', d => {
-            return y(d.temperature) - 10;
+        .attr('y', (d) => {
+          return y(d.temperature) - 10;
         })
         .attr('fill', '#ffab00')
         .attr('font-size', '14px')
-        .text(d => {
-            return d.temperature;
+        .text((d) => {
+          return d.temperature;
         });
 
     const tickData = this.getTickValues(data);
@@ -86,15 +87,17 @@ export class WeatherSummaryComponent implements OnInit {
 
     g.attr('transform', 'translate(0,' + height + ')')
         .call(xAxis)
-        .call(gr => gr.select('.domain').remove());
+        .call((gr) => gr.select('.domain').remove());
   }
 
   getMinTemp(data) {
-    return data.reduce((min, p) => p.temperature < min ? p.temperature : min, data[0].temperature);
+    return data.reduce((min, p) => p.temperature < min ?
+      p.temperature : min, data[0].temperature);
   }
 
   getMaxTemp(data) {
-    return data.reduce((max, p) => p.temperature > max ? p.temperature : max, data[0].temperature);
+    return data.reduce((max, p) => p.temperature > max ?
+      p.temperature : max, data[0].temperature);
   }
 
   getTickValues(data) {
@@ -126,17 +129,18 @@ export class WeatherSummaryComponent implements OnInit {
 
     const xScale = d3.scaleBand()
         .range([width, 0])
-        .domain(data.map((d, i) => d.day))
+        .domain(data.map((d) => d.day))
         .padding(0.2);
 
-    const xAxis = d3.axisBottom()
+    const xAxis = d3
+        .axisBottom()
         .scale(xScale)
         .tickSize(0);
 
     svg.append('g')
         .attr('transform', 'translate(0,' + height + ')')
         .call(xAxis)
-        .call(g => g.select('.domain').remove());
+        .call((g) => g.select('.domain').remove());
 
     const bars = svg.selectAll()
         .data(data)
@@ -164,7 +168,5 @@ export class WeatherSummaryComponent implements OnInit {
         .attr('font-size', '14px')
         .attr('text-anchor', 'middle')
         .text((d) => d.high);
-
   }
-
 }
