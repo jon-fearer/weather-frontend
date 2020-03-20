@@ -1,5 +1,7 @@
 import * as d3 from 'd3';
 import {Component, OnInit} from '@angular/core';
+import {forkJoin} from 'rxjs';
+
 import {WeatherService} from '../shared/services/weather-service';
 
 
@@ -19,19 +21,20 @@ export class WeatherSummaryComponent implements OnInit {
   constructor(private weatherService: WeatherService) { }
 
   ngOnInit() {
-    this.weatherService.getTrailingTemps().subscribe((data: any[]) => {
+    forkJoin(
+        this.weatherService.getTrailingTemps(),
+        this.weatherService.getHighsLows(),
+    ).subscribe((data: any) => {
       this.gotTrailingResponse = true;
-      this.description = data[0].description;
-      this.currentTemp = data[0].temperature;
-      this.createLineGraph(data);
-    });
-    this.weatherService.getHighsLows().subscribe((data: any[]) => {
+      this.description = data[0][0].description;
+      this.currentTemp = data[0][0].temperature;
+      this.createLineGraph(data[0]);
       this.gotHighsLowsResponse = true;
-      this.createBars(data);
+      this.createBars(data[1]);
     });
   }
 
-  createLineGraph(data) {
+  createLineGraph(data: any) {
     const margin = {top: 25, right: 15, bottom: 20, left: 15};
     const width = 320 - margin.left - margin.right;
     const height = 200 - margin.top - margin.bottom;
@@ -46,8 +49,8 @@ export class WeatherSummaryComponent implements OnInit {
         .domain([this.getMinTemp(data), this.getMaxTemp(data)])
         .range([height, 0]);
     const line = d3.line()
-        .x((d, i) => x(i))
-        .y((d) => y(d.temperature))
+        .x((_d, i) => x(i))
+        .y((d: any) => y(d.temperature))
         .curve(d3.curveMonotoneX);
 
     svg.append('g')
@@ -64,24 +67,24 @@ export class WeatherSummaryComponent implements OnInit {
         .data(data)
         .enter()
         .append('text')
-        .attr('x', (d, i) => {
+        .attr('x', (_d, i) => {
           return x(i) - 10;
         })
-        .attr('y', (d) => {
+        .attr('y', (d: any) => {
           return y(d.temperature) - 10;
         })
         .attr('fill', '#ffab00')
         .attr('font-size', '14px')
-        .text((d) => {
+        .text((d: any) => {
           return d.temperature;
         });
 
     const tickData = this.getTickValues(data);
-    const xAxis = d3.axisBottom()
+    const xAxis = d3.axisBottom(null)
         .scale(x)
         .tickSize(0)
         .tickValues(tickData[0])
-        .tickFormat((d, i) => tickData[1][i]);
+        .tickFormat((_d, i) => tickData[1][i]);
 
     const g = svg.append('g');
 
@@ -90,17 +93,17 @@ export class WeatherSummaryComponent implements OnInit {
         .call((gr) => gr.select('.domain').remove());
   }
 
-  getMinTemp(data) {
-    return data.reduce((min, p) => p.temperature < min ?
+  getMinTemp(data: any) {
+    return data.reduce((min: any, p: any) => p.temperature < min ?
       p.temperature : min, data[0].temperature);
   }
 
-  getMaxTemp(data) {
-    return data.reduce((max, p) => p.temperature > max ?
+  getMaxTemp(data: any) {
+    return data.reduce((max: any, p: any) => p.temperature > max ?
       p.temperature : max, data[0].temperature);
   }
 
-  getTickValues(data) {
+  getTickValues(data: any) {
     const tickValues = [];
     const tickLabels = [];
     for (let i = 0; i < data.length; i++) {
@@ -112,7 +115,7 @@ export class WeatherSummaryComponent implements OnInit {
     return [tickValues, tickLabels];
   }
 
-  createBars(data) {
+  createBars(data: any) {
     const margin = {top: 20, right: 5, bottom: 20, left: 5};
     const width = 420 - margin.left - margin.right;
     const height = 200 - margin.top - margin.bottom;
@@ -121,7 +124,10 @@ export class WeatherSummaryComponent implements OnInit {
         .attr('width', width + margin.left + margin.right)
         .attr('height', height + margin.top + margin.bottom)
         .append('g')
-        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+        .attr(
+            'transform',
+            'translate(' + margin.left + ',' + margin.top + ')',
+        );
 
     const yScale = d3.scaleLinear()
         .range([height, 0])
@@ -129,11 +135,11 @@ export class WeatherSummaryComponent implements OnInit {
 
     const xScale = d3.scaleBand()
         .range([width, 0])
-        .domain(data.map((d) => d.day))
+        .domain(data.map((d: any) => d.day))
         .padding(0.2);
 
     const xAxis = d3
-        .axisBottom()
+        .axisBottom(null)
         .scale(xScale)
         .tickSize(0);
 
@@ -148,25 +154,25 @@ export class WeatherSummaryComponent implements OnInit {
         .append('g');
 
     bars.append('rect')
-        .attr('x', (d) => xScale(d.day))
-        .attr('y', (d) => yScale(d.high))
-        .attr('id', (d, i) => `bar-${i}`)
-        .attr('height', (d) => height - yScale(d.high))
+        .attr('x', (d: any) => xScale(d.day))
+        .attr('y', (d: any) => yScale(d.high))
+        .attr('id', (_d, i) => `bar-${i}`)
+        .attr('height', (d: any) => height - yScale(d.high))
         .attr('width', xScale.bandwidth())
         .attr('fill', '#ffab00')
-        .on('mouseover', (d, i) => {
+        .on('mouseover', (_d, i) => {
           d3.select(`#bar-${i}`).attr('fill', '#3f52b5');
         })
-        .on('mouseout', (d, i) => {
+        .on('mouseout', (_d, i) => {
           d3.select(`#bar-${i}`).attr('fill', '#ffab00');
         });
 
     bars.append('text')
-        .attr('x', (d) => xScale(d.day) + (xScale.bandwidth() / 2))
-        .attr('y', (d) => yScale(d.high) - 5)
+        .attr('x', (d: any) => xScale(d.day) + (xScale.bandwidth() / 2))
+        .attr('y', (d: any) => yScale(d.high) - 5)
         .attr('fill', '#ffab00')
         .attr('font-size', '14px')
         .attr('text-anchor', 'middle')
-        .text((d) => d.high);
+        .text((d: any) => d.high);
   }
 }
